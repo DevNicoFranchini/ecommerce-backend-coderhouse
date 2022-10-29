@@ -56,19 +56,11 @@ router.post("/", isAdmin, completeData, async (req, res, next) => {
     const data = req.body;
     const newProduct = await productsContainer.save(data);
 
-    if (newProduct) {
-      return res.status(200).json({
-        error: false,
-        status: 201,
-        body: newProduct,
-      });
-    } else {
-      res.status(404).json({
-        error: true,
-        stauts: 404,
-        body: "Sorry. The product couldn't be created beacuse the file doesn't exist",
-      });
-    }
+    return res.status(200).json({
+      error: false,
+      status: 201,
+      body: data,
+    });
   } catch (err) {
     next(err);
   }

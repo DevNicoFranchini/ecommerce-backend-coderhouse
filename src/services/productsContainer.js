@@ -35,38 +35,54 @@ class ProductsContainer {
   // Saving product function
   save = async (product) => {
     try {
-      const data = await this.readFile();
+      if (fs.existsSync(`./src/db/${this.nameFile}`)) {
+        const data = await this.readFile();
 
-      if (data.length === 0) {
-        product.id = 1;
+        if (data.length === 0) {
+          product.id = 1;
+        } else {
+          const lastProduct = data[data.length - 1];
+          const id = lastProduct.id + 1;
+
+          product.id = id;
+        }
+
+        if (!product.stock) {
+          product.stock = 0;
+        }
+
+        const newProduct = {
+          id: product.id,
+          timestamp: moment().format("DD/MM/YYYY HH:mm:ss"),
+          name: product.name,
+          description: product.description,
+          code: product.code,
+          thumbnail: product.thumbnail,
+          price: product.price,
+          stock: product.stock,
+        };
+
+        data.push(newProduct);
+
+        await this.writeFile(data);
+
+        return newProduct;
       } else {
-        const lastProduct = data[data.length - 1];
-        console.log(lastProduct);
-        const id = lastProduct.id + 1;
-
-        product.id = id;
+        const newProduct = {
+          id: 1,
+          timestamp: moment().format("DD/MM/YYYY HH:mm:ss"),
+          name: product.name,
+          description: product.description,
+          code: product.code,
+          thumbnail: product.thumbnail,
+          price: product.price,
+          stock: product.stock,
+        };
+        await fs.promises.writeFile(
+          `./src/db/${this.nameFile}`,
+          JSON.stringify([newProduct], null, 2)
+        );
       }
-
-      if (!product.stock) {
-        product.stock = 0;
-      }
-
-      const newProduct = {
-        id: product.id,
-        timestamp: moment().format("DD/MM/YYYY HH:mm:ss"),
-        name: product.name,
-        description: product.description,
-        code: product.code,
-        image: product.image,
-        price: product.price,
-        stock: product.stock,
-      };
-
-      data.push(newProduct);
-
-      await this.writeFile(data);
-
-      return newProduct;
     } catch (err) {
       console.log(err);
     }
