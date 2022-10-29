@@ -2,12 +2,12 @@
 import express from "express";
 
 import { URL } from "url";
-// Import services
 
-import { productsRouter } from "./services/productsRouter.js";
-import { cartRouter } from "./services/cartRouter.js";
+// Import routes
+import { apiRouter } from "./routes/index.js";
 
 const __dirname = new URL(".", import.meta.url).pathname;
+
 const app = express();
 
 // Define local and production port.
@@ -27,5 +27,4 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
 //Routes
-app.use("/api/products", productsRouter);
-app.use("/api/cart", cartRouter);
+apiRouter(app);
